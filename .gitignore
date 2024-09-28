@@ -1,0 +1,6 @@
+*__pycache__
+lismin.online_other/
+db/
+*log
+*.jpg
+*.png

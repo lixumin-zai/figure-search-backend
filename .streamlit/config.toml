@@ -1,0 +1,7 @@
+[theme]
+base="light"
+[server]
+runOnSave = false
+port = 10003
+sslCertFile = '/root/project/figure_search/lismin.online_other/lismin.online_bundle.pem'
+sslKeyFile = '/root/project/figure_search/lismin.online_other/lismin.online.key'

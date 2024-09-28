@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄像头</title>
+    <style>
+        body {
+            margin: 0; /* 移除边距 */
+            display: flex; /* 使用Flex布局 */
+            flex-direction: column; /* 垂直排列 */
+            align-items: center; /* 垂直居中 */
+            min-height: 100vh; /* 确保body至少与视口一样高 */
+            /* background-color: #f0f0f0; 可选：背景颜色         */
+        }
+        video {
+            width: 100%; /* 设置视频宽度 */
+            height: 430px; /* 高度自动调整，保持比例 */
+            /* aspect-ratio: 16 / 9; 设置宽高比为16:9 */
+
+            /* border: 2px solid #ccc; 可选：视频边框 */
+        }
+        .button-container {
+            display: flex; /* 使用Flex布局 */
+            justify-content: center; /* 水平居中按钮 */
+        }
+        button {
+            margin: 4px; /* 按钮间距 */
+            width:100px;
+            padding: 10px; /* 按钮内边距 */
+            font-size: 16px; /* 字体大小 */
+        }
+        .input-container {
+            display: flex; /* 添加此行 */
+            margin-top: 4px; /* 输入框与按钮容器之间的间距 */
+            justify-content: center; /* 水平居中按钮 */
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            width: 100%; /* 设置输入框宽度 */
+            max-width: 300px; /* 可选：设置最大宽度 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
+            text-align: center; /* 使输入的文本居中 */
+        }
+        .text-overlay {
+            position: absolute; /* 绝对定位 */
+            top: 0; /* 置于顶部 */
+            width: 100%; /* 宽度与视频元素相同 */
+            text-align: center; /* 居中文本 */
+            background: rgba(0, 0, 0, 0.0); /* 背景半透明黑色 */
+            color: rgb(241, 116, 116); /* 字体颜色白色 */
+            padding: 10px; /* 内边距 */
+            font-size: 14px;
+            box-sizing: border-box; /* 包括内边距和边框在内 */
+        }
+        #camera {
+            position: relative; /* 确保子元素的绝对定位相对于这个父元素 */
+            display: inline-block; /* 使其大小与内容相适应 */
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="camera">
+            <video id="video" autoplay="autoplay" playsinline webkit-playsinline="true"></video>
+            <div class="text-overlay" id="textOverlay">宝宝们请尽量拍题目的图形哦，文本不重要</div>
+        </div>
+        <div class="button-container">
+            <button id="capture">拍摄</button>
+            <button id="upload">本地获取</button>
+        </div>
+        <div class="input-container">
+            <input type="text" id="inputText" placeholder="请输入执行码">
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
