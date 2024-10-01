@@ -8,9 +8,10 @@ from PIL import Image
 from exception import UserAlreadyExistsError
 from db_process import Database
 from streamlit.components.v1 import html
+from datetime import datetime
 
 db = Database('db/test_0928.db')
-
+save_image_path = "/root/project/figure_search/public/upload"
 # st.sidebar.image("https://picsum.photos/200")
 # with st.container():
 #     st.text("This is paragraph :)")
@@ -106,26 +107,33 @@ def verify_code(verification_code):
 
 if "show_result" not in st.session_state and "show_verify_error" not in st.session_state:
     image_base64, verification_code = camera(st.session_state.is_restart)
-        
     if not verify_code(verification_code):
         if verification_code != " ":
             show_verify_error(verification_code)
     
     else:
-        if len(image_base64)>728604:
-            image = Image.open(io.BytesIO(base64.b64decode(image_base64))).convert("RGB")
-            image.thumbnail((1024, 1024))
-            image_bytes = io.BytesIO()
-            image.save(image_bytes, format="JPEG")
-            image_base64 = base64.b64encode(image_bytes.getvalue()).decode("utf-8")
+        if st.session_state.remaining_times > 0:
+            if len(image_base64)>728604:
+                image = Image.open(io.BytesIO(base64.b64decode(image_base64))).convert("RGB")
+                image.thumbnail((1024, 1024))
+                image_bytes = io.BytesIO()
+                image.save(image_bytes, format="JPEG")
+                image_base64 = base64.b64encode(image_bytes.getvalue()).decode("utf-8")
 
-        if image_base64:
-            image, cost_time = post_test(image_base64)
-            image = Image.open(image).convert("RGB")
-            show_result(image, cost_time)
+            if image_base64:
+                _image = Image.open(io.BytesIO(base64.b64decode(image_base64))).convert("RGB")
+                save_path = f"{save_image_path}/{verification_code}|{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+                _image.save(save_path)
+                print(save_path)
+                image, cost_time = post_test(image_base64)
+                image = Image.open(image).convert("RGB")
+                show_result(image, cost_time)
+        else:
+            show_verify_error(verification_code)
 
 
 
 # streamlit run show.py
 
 # docker run --network host --name nginx -v /root/software/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /root/software/nginx/conf/conf.d:/etc/nginx/conf.d -v /root/software/nginx/log:/var/log/nginx -v /root/software/nginx/html:/usr/share/nginx/html -d nginx:latest
+

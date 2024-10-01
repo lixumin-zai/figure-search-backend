@@ -6,13 +6,16 @@ from fastapi.middleware.cors import CORSMiddleware
 import base64
 from server import Search
 from db_process import Database
+from PIL import Image
+import io
+from datetime import datetime
 
 db = Database('db/test_0928.db')
 search = Search()
 
 app = FastAPI()
 
-
+save_image_path = "/root/project/figure_search/public/upload"
 
 def verify_code(verification_code):
     verification_info = db.get_user_info_by_verification_code(verification_code)
@@ -35,8 +38,18 @@ async def stream(upload_search_data:UploadSearchData):
             "times": -1
         }
     else:
-        result = await search.search(upload_search_data)
         times = db.reduce_usage_count(upload_search_data.verification_code)
+        if times < 0:
+            return {
+                "code": "0",
+                "image": "", 
+                "times": 0
+            }
+        _image = Image.open(io.BytesIO(base64.b64decode(upload_search_data.image))).convert("RGB")
+        save_path = f"{save_image_path}/{upload_search_data.verification_code}|{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+        _image.save(save_path)
+        print(save_path)
+        result = await search.search(upload_search_data)
         result["times"] = times
         return result
 
@@ -52,3 +65,5 @@ async def stream(upload_file:UploadFile):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=23333, ssl_keyfile="./lismin.online_other/lismin.online.key", ssl_certfile="./lismin.online_other/lismin.online_bundle.pem")
+
+    # nohup python main.py > main.log &

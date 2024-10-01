@@ -48,7 +48,9 @@ function onRender(event) {
         let captureButton = document.getElementById('capture');
         let inputText = document.getElementById('inputText');
         let restartButton = document.getElementById('restart');
-        const constraints =  { facingMode: 'environment', advanced : [{focusMode: "continuous"}]};
+        
+        const constraints =  { facingMode: 'environment', advanced : [{focusMode: "continuous"}],width: { ideal: 1920 },
+        height: { ideal: 1440 }};
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: constraints, audio: false})
                 .then(function(stream) {
@@ -62,11 +64,29 @@ function onRender(event) {
         }
         captureButton.addEventListener('click', function() {
             const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            // 设置画布宽度和高度
+            const targetWidth = 960;
+            const targetHeight = 960;
+
+            // 获取视频宽高，并保持纵横比缩放到目标宽高
+            const aspectRatio = video.videoWidth / video.videoHeight;
+            if (aspectRatio > 1) {
+                // 视频宽度大于高度，按照宽度调整
+                canvas.width = targetWidth;
+                canvas.height = targetWidth / aspectRatio;
+            } else {
+                // 视频高度大于或等于宽度，按照高度调整
+                canvas.height = targetHeight;
+                canvas.width = targetHeight * aspectRatio;
+            }
+
             const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width*2, canvas.height*2);
-            const base64Image = canvas.toDataURL('image/png');
+
+            // 将视频绘制到画布上
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 将画布转换为 base64 string
+            const base64Image = canvas.toDataURL('image/jpeg');
             // // video.pause();
             const dataToSend = {
                 text: inputText.value,
@@ -103,19 +123,25 @@ function onRender(event) {
         const currentUrl = window.parent.location.href;;
         console.log(currentUrl); // 输出: 123
         // 获取查询字符串部分
-        const queryString = currentUrl.split('?')[1];
-        const params = queryString.split('&');
-        // 初始化一个对象来存储参数
-        const queryParams = {};
-        // 遍历键值对并存储到对象中
-        params.forEach(param => {
-            const [key, value] = param.split('=');
-            queryParams[key] = decodeURIComponent(value);
-        });
-
-        // 获取code参数
-        const code = queryParams['code'];
-        inputText.value = code
+        const queryStringIndex = currentUrl.indexOf('?');
+        if (queryStringIndex !== -1){
+            const queryString = currentUrl.split('?')[1];
+            const params = queryString.split('&');
+            // 初始化一个对象来存储参数
+            const queryParams = {};
+            // 遍历键值对并存储到对象中
+            params.forEach(param => {
+                const [key, value] = param.split('=');
+                queryParams[key] = decodeURIComponent(value);
+            });
+    
+            // 获取code参数
+            const code = queryParams['code'];
+            inputText.value = code
+        } else {
+            inputText.value = ""
+        }
+        
 
 
     window.rendered = true

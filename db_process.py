@@ -128,6 +128,10 @@ class Database:
             self.cursor.execute('UPDATE users SET usage_count = ? WHERE verification_code = ?', (new_count, verification_code))
             self.conn.commit()
 
+    def delete_user(self, wechat_id):
+        self.cursor.execute("DELETE FROM users WHERE wechat_id = ?", (wechat_id,))
+        self.conn.commit()
+
     def close(self):
         self.cursor.close()
         self.conn.close()
@@ -135,11 +139,14 @@ class Database:
 if __name__ == "__main__":
     import uuid
     db = Database('db/test_0928.db')
-    db.create_user('Daring1918', str(uuid.uuid4()))
-    # db.increase_usage_count("1479bd3e-6343-4ae1-97d5-90e386655118", 1)
-
+    # db.create_user('lixumin', 'lixumin')
+    # db.delete_user('cz71227669889')
+    # db.create_user('cz71227669889', 'cz71227669889')
+    # db.increase_usage_count("cz71227669889", 85)
+    
     for i in db.get_users():
-        print(i)
+        if i[1] == "cz71227669889":
+            print(i)
     import uuid
     # db.create_user('xrkuma', "bini")
     
