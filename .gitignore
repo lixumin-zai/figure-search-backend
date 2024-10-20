@@ -4,4 +4,6 @@ db/
 *log
 *.jpg
 *.png
+*.out
 *public/
+feedback/

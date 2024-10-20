@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from starlette.responses import StreamingResponse
 import time
 from pydantic import BaseModel
@@ -9,11 +9,13 @@ from db_process import Database
 from PIL import Image
 import io
 from datetime import datetime
+import uuid
+import requests
 
 db = Database('db/test_0928.db')
 search = Search()
 
-app = FastAPI()
+app = FastAPI(redoc_url=None)
 
 save_image_path = "/root/project/figure_search/public/upload"
 
@@ -61,6 +63,48 @@ class UploadFile(BaseModel):
 async def stream(upload_file:UploadFile):
     result = await search.search(upload_file)
     return result
+
+
+@app.post("/feedback")
+async def feedback(upload_search_data:UploadSearchData):
+    image = Image.open(io.BytesIO(base64.b64decode(upload_search_data.image))).convert("RGB")
+    image.save(f"feedback/{upload_search_data.verification_code}|{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg", format="JPEG")
+    return {"code":0}
+
+class LoginData(BaseModel):
+    code: str
+
+@app.get("/login")
+async def get_openid(code: str = Query(...)):
+    APPID = "wx2a8370452f0677e4"
+    SECRET = "4f54e3e098552928014cdbbae56fdabf"
+    JSCODE = code
+    resp = requests.get(f"https://api.weixin.qq.com/sns/jscode2session?appid={APPID}&secret={SECRET}&js_code={JSCODE}&grant_type=authorization_code")
+    open_id = resp.json().get("openid", None)
+
+    if open_id:
+        info = db.get_user_info_by_wechat_id(open_id)
+        if info:
+            verification_code = info[2]
+            cost_time = info[3]
+        else:
+            verification_code = str(uuid.uuid4())
+            cost_time = 10
+            db.create_user(open_id, verification_code) 
+            db.increase_usage_count(verification_code, -5)
+
+        return {"code":0, "verification_code": verification_code, "cost_time": cost_time}
+    else:
+        return {"code":1, "verification_code": "error", "cost_time": 0}
+
+@app.get("/get_cost_time")
+async def get_cost_time(verification_code: str = Query(...)):
+    info = db.get_user_info_by_verification_code(verification_code)
+    if info:
+        return {"code":0, "cost_time": info[3]}
+    else:
+        return {"code":1, "cost_time": 0}
+    
 
 if __name__ == "__main__":
     import uvicorn

@@ -2,7 +2,7 @@ import sqlite3
 from exception import UserAlreadyExistsError
 
 
-# class Database:
+# class Database2:
 #     def __init__(self, db_name):
 #         self.conn = sqlite3.connect(db_name)
 #         self.cursor = self.conn.cursor()
@@ -13,9 +13,10 @@ from exception import UserAlreadyExistsError
 #         CREATE TABLE IF NOT EXISTS users (
 #             id INTEGER PRIMARY KEY,
 #             wechat_id TEXT NOT NULL UNIQUE,
-#             phone_number TEXT NOT NULL UNIQUE,
 #             verification_code TEXT NOT NULL UNIQUE,
-#             usage_count INTEGER NOT NULL DEFAULT 30
+#             usage_count INTEGER NOT NULL DEFAULT 10,
+#             invitation_code TEXT UNIQUE, 
+#             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 #         )
 #         ''')
 #         self.conn.commit()
@@ -142,12 +143,12 @@ if __name__ == "__main__":
     # db.create_user('lixumin', 'lixumin')
     # db.delete_user('cz71227669889')
     # db.create_user('cz71227669889', 'cz71227669889')
-    # db.increase_usage_count("cz71227669889", 85)
     
-    for i in db.get_users():
-        if i[1] == "cz71227669889":
-            print(i)
-    import uuid
+    print(db.get_user_info_by_verification_code("2359210977"))
+    # for i in db.get_users():
+    #     if i[1] == "cz71227669889":
+    #         print(i)
+    # import uuid
     # db.create_user('xrkuma', "bini")
     
     # # 查询用户信息
