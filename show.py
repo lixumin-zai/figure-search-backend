@@ -12,31 +12,7 @@ from datetime import datetime
 
 db = Database('db/test_0928.db')
 save_image_path = "/root/project/figure_search/public/upload"
-# st.sidebar.image("https://picsum.photos/200")
-# with st.container():
-#     st.text("This is paragraph :)")
-#     html("""
-#     <script>
-#         // Locate elements
-#         var decoration = window.parent.document.querySelectorAll('[data-testid="stDecoration"]')[0];
-#         var sidebar = window.parent.document.querySelectorAll('[data-testid="stSidebar"]')[0];
-#         // Observe sidebar size
-#         function outputsize() {
-#             decoration.style.left = `${sidebar.offsetWidth}px`;
-#         }
-#         new ResizeObserver(outputsize).observe(sidebar);
-#         // Adjust sizes
-#         outputsize();
-#         decoration.style.height = "3.0rem";
-#         decoration.style.right = "45px";
-#         // Adjust text decorations
-#         decoration.innerText = "Welcome, Streamlit App!"; // Replace with your desired text
-#         decoration.style.fontWeight = "bold";
-#         decoration.style.display = "flex";
-#         decoration.style.justifyContent = "center";
-#         decoration.style.alignItems = "center";
-#     </script>
-#     """, width=0, height=0)
+
 
 URL = "http://117.161.233.78:20007/search"
 st.set_page_config(
@@ -136,25 +112,25 @@ if "show_result" not in st.session_state and "show_verify_error" not in st.sessi
         else:
             show_verify_error(verification_code)
 
-st.markdown("""
-<div style='display: flex;
-    justify-content: center; 
-    align-items: center;   
-    '>
-    <a 
-        href='https://beian.miit.gov.cn/' 
-        target='_blank' 
-        style='
-            color: #666666;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: color 0.3s ease;
-            width: fit-content; /* 或指定一个固定宽度 */
-            margin: 0 auto;
-            '>
-        京ICP备2024089598号-2
-        </a><div>""", unsafe_allow_html=True)
+# st.markdown("""
+# <div style='display: flex;
+#     justify-content: center; 
+#     align-items: center;   
+#     '>
+#     <a 
+#         href='https://beian.miit.gov.cn/' 
+#         target='_blank' 
+#         style='
+#             color: #666666;
+#             text-decoration: none;
+#             display: inline-flex;
+#             align-items: center;
+#             transition: color 0.3s ease;
+#             width: fit-content; /* 或指定一个固定宽度 */
+#             margin: 0 auto;
+#             '>
+#         京ICP备2024089598号-2
+#         </a><div>""", unsafe_allow_html=True)
 
 
 # nohup streamlit run show.py > show.log &
